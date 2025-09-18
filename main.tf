@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "my-terraform-state-bucket"
+    bucket = "terraform-state-desigan-123456789012-us-east-1"
     key    = "lambda-cicd/terraform.tfstate"
     region = "us-east-1"
   }
@@ -21,7 +21,7 @@ provider "aws" {
 # S3 Bucket for Lambda code
 # --------------------------
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "my-lambda-cicd-bucket"
+  bucket = "lambda-cicd-desigan-123456789012-us-east-1"
 }
 
 # --------------------------
