@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:   # allows manual run from GitHub UI
+  workflow_dispatch:   # allows manual run
 
 jobs:
   deploy:
@@ -18,7 +18,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python (for Lambda runtime code if needed)
+      - name: Set up Python (for Lambda packaging)
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir -p build
           zip -j build/lambda.zip lambda_function.py
+          ls -l build  # Debug: confirm zip exists
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -52,13 +53,13 @@ jobs:
   destroy:
     name: Destroy Infrastructure
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'   # only manual
+    if: github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Package Lambda function (needed for consistency)
+      - name: Package Lambda function
         run: |
           mkdir -p build
           zip -j build/lambda.zip lambda_function.py

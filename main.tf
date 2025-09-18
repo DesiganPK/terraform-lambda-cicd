@@ -1,27 +1,15 @@
 terraform {
-  backend "s3" {
-    bucket = "terraform-state-desigan-123456789012-us-east-1"
-    key    = "lambda-cicd/terraform.tfstate"
-    region = "us-east-1"
-  }
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
     }
   }
+  required_version = ">= 1.5.0"
 }
 
 provider "aws" {
   region = "us-east-1"
-}
-
-# --------------------------
-# S3 Bucket for Lambda code
-# --------------------------
-resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "lambda-cicd-desigan-123456789012-us-east-1"
 }
 
 # --------------------------
@@ -54,10 +42,7 @@ resource "aws_lambda_function" "hello_lambda" {
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.9"
 
-  s3_bucket = aws_s3_bucket.lambda_bucket.bucket
-  s3_key    = "lambda.zip"
-
-  # ensures TF detects code changes
+  filename         = "build/lambda.zip"    # Use local zip
   source_code_hash = filebase64sha256("build/lambda.zip")
 }
 
